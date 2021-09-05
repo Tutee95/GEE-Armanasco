@@ -1,0 +1,39 @@
+var imageCollection = ee.ImageCollection("LANDSAT/LO08/C01/T1_RT"),
+    laguna = /* color: #ffc82d */ee.Geometry.Point([-61.38164976309903, -38.93833069609428]),
+    NDVIcustom = {"opacity":1,"bands":["B5"],"min":-0.13376199901103974,"max":0.5376129418611526,"gamma":1},
+    imageCollection2 = ee.ImageCollection("LANDSAT/LC08/C01/T1_RT");
+
+//importo imagenes y filtro por geometría
+var landsat_coll = ee.ImageCollection("LANDSAT/LO08/C01/T1_RT").filterBounds(laguna);
+var landsat2 = ee.ImageCollection("LANDSAT/LC08/C01/T1_RT").filterBounds(laguna);
+
+//Map.centerObject(landsat_coll, 8);
+
+print(landsat_coll);
+print(landsat2);
+
+// Map.addLayer(landsat_coll,{max:9500,min:6000,bands:['B4','B3','B2']},'Color_real')
+
+// var ndvi = landsat_coll.first().expression(
+//         '(NIR-RED)/(NIR+RED)',
+//         {
+//           'RED': landsat_coll.first().select('B4'),    //  RED
+//           'NIR': landsat_coll.first().select('B5'),    // NIR
+//         });
+
+// Map.addLayer(ndvi, {min: -1, max: 1}, "NDVI");
+
+// Map.addLayer(ndvi,NDVIcustom, "NDVI_custom");
+
+Map.addLayer(landsat_coll,{max:9500,min:6000,bands:['B4','B3','B2']},'Color_real')
+
+var ndvi = landsat2.first().expression(
+        '(NIR-RED)/(NIR+RED)',
+        {
+          'RED': landsat2.first().select('B4'),    //  RED
+          'NIR': landsat2.first().select('B5'),    // NIR
+        });
+
+Map.addLayer(ndvi, {min: -1, max: 1}, "NDVI");
+
+Map.addLayer(ndvi,NDVIcustom, "NDVI_custom");

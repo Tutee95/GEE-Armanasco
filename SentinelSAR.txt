@@ -1,0 +1,38 @@
+var laguna = /* color: #d63000 */ee.Geometry.Point([-61.38095539539357, -38.93842089044818]),
+    sentinel1 = ee.ImageCollection("COPERNICUS/S1_GRD");
+var coleccion = sentinel1.filterBounds(laguna);
+print(coleccion);
+
+function addNRPB(image) {
+    var nrpb = image.normalizedDifference(['VV','VH']).rename('NRPB');
+    return image.addBands(nrpb);
+        }
+        
+var filtrada = coleccion.filterDate('2017-01-01','2021-12-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+print(filtrada)
+
+var with_ndvi = coleccion.map(addNRPB);
+print(with_ndvi)
+//----------------------------//
+//SETUP ORIGINAL
+
+//var myBand = filtrada('VV')+filtrada('VH');
+
+//Map.addLayer(filtrada,{bands:['myBand']},'Prueba');
+
+Map.addLayer(coleccion,{bands:['VV','VV','VH']},'Mezcla');
+
+Map.addLayer(with_ndvi,{bands:['VH','VV','NRPB']},'RGB');
+
+var vista1 = {min: -26.80404141729772, max: -0.9461584954214544,bands: ['VV'], palette: ['green', 'white']};
+var vista2 = {min: -31.414696842870423, max:-4.575133651191982, bands: ['VH'], palette: ['blue', 'white']};
+var vista3 = {min: -1, max:1, bands: ['NRPB'], palette: ['blue', 'white']};
+Map.addLayer(coleccion, vista1, 'vege');
+Map.addLayer(coleccion, vista2, 'soil');
+Map.addLayer(with_ndvi, vista3, 'xxx');
+
+var shinny2 = coleccion.qualityMosaic('VH');
+Map.addLayer(shinny2, vista2, 'shinny2');
+
+var shinny1 = coleccion.qualityMosaic('VV');
+Map.addLayer(shinny1, vista1, 'shinny1');

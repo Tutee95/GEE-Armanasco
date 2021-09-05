@@ -1,0 +1,112 @@
+var laguna = /* color: #d63000 */ee.Geometry.Point([-61.38095539539357, -38.93842089044818]),
+    landsat8_coll = ee.ImageCollection("LANDSAT/LC08/C01/T1_RT");
+
+
+var coleccion = landsat8_coll.filterBounds(laguna);
+print(coleccion);
+
+function addNDVI(image) {
+    var ndvi = image.normalizedDifference(['B5', 'B4']).rename('NDVI');
+    return image.addBands(ndvi);
+        }
+        
+        
+var filtrada = coleccion.filterDate('2017-10-01', '2018-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+
+//----------------------------//
+
+var year2014 = coleccion.filterDate('2013-10-01', '2014-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2014.map(addNDVI);
+var greenest_14 = with_ndvi.qualityMosaic('NDVI');
+
+var year2015 = coleccion.filterDate('2014-10-01', '2015-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2015.map(addNDVI);
+var greenest_15 = with_ndvi.qualityMosaic('NDVI');
+
+var year2016 = coleccion.filterDate('2015-10-01', '2016-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2016.map(addNDVI);
+var greenest_16 = with_ndvi.qualityMosaic('NDVI');
+
+var year2017 = coleccion.filterDate('2016-10-01', '2017-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2017.map(addNDVI);
+var greenest_17 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2018 = coleccion.filterDate('2017-10-01', '2018-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2018.map(addNDVI);
+var greenest_18 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2019 = coleccion.filterDate('2018-10-01', '2019-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2019.map(addNDVI);
+var greenest_19 = with_ndvi.qualityMosaic('NDVI');
+
+var year2020 = coleccion.filterDate('2019-10-01', '2020-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2019.map(addNDVI);
+var greenest_20 = with_ndvi.qualityMosaic('NDVI');
+
+var veranos = ee.ImageCollection([greenest_14, greenest_15, greenest_16, greenest_17, greenest_18, greenest_18, greenest_19, greenest_20]);
+print(veranos);
+
+//------------------------------------------------------------//
+
+var year2014 = coleccion.filterDate('2014-07-01', '2014-09-30');
+var with_ndvi = year2014.map(addNDVI);
+var invierno_14 = with_ndvi.qualityMosaic('NDVI');
+
+var year2015 = coleccion.filterDate('2015-07-01', '2015-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2015.map(addNDVI);
+var invierno_15 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2016 = coleccion.filterDate('2016-07-01', '2016-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2016.map(addNDVI);
+var invierno_16 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2017 = coleccion.filterDate('2017-07-01', '2017-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2017.map(addNDVI);
+var invierno_17 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2018 = coleccion.filterDate('2018-07-01', '2018-09-30');
+var with_ndvi = year2018.map(addNDVI);
+var invierno_18 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2019 = coleccion.filterDate('2019-07-01', '2019-09-30');
+var with_ndvi = year2019.map(addNDVI);
+var invierno_19 = with_ndvi.qualityMosaic('NDVI');
+
+var year2020 = coleccion.filterDate('2020-07-01', '2020-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2019.map(addNDVI);
+var invierno_20 = with_ndvi.qualityMosaic('NDVI');
+
+var inviernos = ee.ImageCollection([invierno_14, invierno_15, invierno_16, invierno_17, invierno_18, invierno_18, invierno_19, invierno_20]);
+print(inviernos);
+
+//---------------------------------------------------//
+
+var maxVerano = veranos.max();
+var maxInvierno = inviernos.max();
+
+//----------------------------//
+
+var rgb_vis = {min: 6000, max: 11500, bands: ['B4', 'B3', 'B2']};
+var ndvi_colores = {min: -0.2, max: 0.7,bands: ['NDVI'], palette: ['black', 'white', 'green']};
+var ndvi_v1 = {min: -1, max: 1,bands: ['NDVI'], palette: ['blue', 'white']};
+var ndvi_v2 = {min: 0, max: 0.6,bands: ['NDVI'], palette: ['blue', 'white']};
+var ndvi_v3 = {min: -0.2, max: 0.6,bands: ['NDVI'], palette: ['blue', 'white']};
+
+//----------------------------//
+
+Map.setCenter(-61.38095539539357, -38.93842089044818);
+//Map.addLayer(filtrada.median(), rgb_vis, 'RGB(median)');
+//Map.addLayer(maxVerano, ndvi_visual, 'ver');
+//Map.addLayer(maxInvierno, ndvi_visual, 'inv');
+
+Map.addLayer(maxInvierno, ndvi_v1, '1'); //segundo
+Map.addLayer(maxInvierno, ndvi_v2, '2'); //el mejor
+Map.addLayer(maxInvierno, ndvi_v3, '3');
+
+

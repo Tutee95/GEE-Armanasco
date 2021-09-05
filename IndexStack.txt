@@ -1,0 +1,164 @@
+var laguna = /* color: #d63000 */ee.Geometry.Point([-61.38095539539357, -38.93842089044818]),
+    landsat8_coll = ee.ImageCollection("LANDSAT/LC08/C01/T1_RT");
+
+
+var coleccion = landsat8_coll.filterBounds(laguna);
+print(coleccion);
+
+function addNDVI(image) {
+    var ndvi = image.normalizedDifference(['B5', 'B4']).rename('NDVI');
+    return image.addBands(ndvi);
+        }
+        
+function addNDWI(image) {
+    var ndwi = image.normalizedDifference(['B3', 'B5']).rename('NDWI');
+    return image.addBands(ndwi);
+        }
+        
+function addNDSI(image) {
+    var ndsi = image.normalizedDifference(['B6', 'B5']).rename('NDSI');
+    return image.addBands(ndsi);
+        }
+        
+        
+var filtrada = coleccion.filterDate('2017-10-01', '2018-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+
+//----------------------------//
+
+var year2014 = coleccion.filterDate('2013-10-01', '2014-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2014.map(addNDVI);
+var greenest_14 = with_ndvi.qualityMosaic('NDVI');
+
+var year2015 = coleccion.filterDate('2014-10-01', '2015-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2015.map(addNDVI);
+var greenest_15 = with_ndvi.qualityMosaic('NDVI');
+
+var year2016 = coleccion.filterDate('2015-10-01', '2016-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2016.map(addNDVI);
+var greenest_16 = with_ndvi.qualityMosaic('NDVI');
+
+var year2017 = coleccion.filterDate('2016-10-01', '2017-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2017.map(addNDVI);
+var greenest_17 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2018 = coleccion.filterDate('2017-10-01', '2018-03-30').filterMetadata('CLOUD_COVER','Less_than',0.4);
+var with_ndvi = year2018.map(addNDVI);
+var greenest_18 = with_ndvi.qualityMosaic('NDVI');
+
+
+var year2019 = coleccion.filterDate('2018-10-01', '2019-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2019.map(addNDVI);
+var greenest_19 = with_ndvi.qualityMosaic('NDVI');
+
+var year2020 = coleccion.filterDate('2019-10-01', '2020-03-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2019.map(addNDVI);
+var greenest_20 = with_ndvi.qualityMosaic('NDVI');
+
+var veranos = ee.ImageCollection([greenest_14, greenest_15, greenest_16, greenest_17, greenest_18, greenest_18, greenest_19, greenest_20]);
+print(veranos);
+
+//------------------------------------------------------------//
+
+var year2014 = coleccion.filterDate('2014-07-01', '2014-09-30');
+var with_ndvi = year2014.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_14 = with_ndsi.qualityMosaic('NDVI');
+
+var year2015 = coleccion.filterDate('2015-07-01', '2015-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2015.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_15 = with_ndsi.qualityMosaic('NDVI');
+
+
+var year2016 = coleccion.filterDate('2016-07-01', '2016-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2016.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_16 = with_ndsi.qualityMosaic('NDVI');
+
+
+var year2017 = coleccion.filterDate('2017-07-01', '2017-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2017.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_17 = with_ndsi.qualityMosaic('NDVI');
+
+
+var year2018 = coleccion.filterDate('2018-07-01', '2018-09-30');
+var with_ndvi = year2018.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_18 = with_ndsi.qualityMosaic('NDVI');
+
+
+var year2019 = coleccion.filterDate('2019-07-01', '2019-09-30');
+var with_ndvi = year2019.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_19 = with_ndsi.qualityMosaic('NDVI');
+
+var year2020 = coleccion.filterDate('2020-07-01', '2020-09-30').filterMetadata('CLOUD_COVER','Less_than',0.6);
+var with_ndvi = year2020.map(addNDVI);
+var with_ndwi = with_ndvi.map(addNDWI);
+var with_ndsi = with_ndwi.map(addNDSI);
+var invierno_20 = with_ndsi.qualityMosaic('NDVI');
+
+var inviernos = ee.ImageCollection([invierno_14, invierno_15, invierno_16, invierno_17, invierno_18, invierno_18, invierno_19, invierno_20]);
+print(inviernos);
+
+//---------------------------------------------------//
+
+var maxVerano = veranos.max();
+var maxInvierno = inviernos.max();
+
+//----------------------------//
+
+var rgb_vis = {min: 6000, max: 11500, bands: ['B4', 'B3', 'B2']};
+var ndvi_colores = {min: -0.2, max: 0.7,bands: ['NDVI'], palette: ['black', 'white', 'green']};
+var ndvi_v1 = {min: -1, max: 1,bands: ['NDVI'], palette: ['blue', 'white']};
+var ndvi_v2 = {min: 0, max: 0.6,bands: ['NDVI'], palette: ['blue', 'white']};
+var ndvi_v3 = {min: -0.2, max: 0.6,bands: ['NDVI'], palette: ['blue', 'white']};
+
+//----------------------------//
+//SETUP PRUEBAS
+
+// Create the NDVI and NDWI spectral indices.
+var ndvi = maxVerano.normalizedDifference(['B5', 'B4']);
+var ndwi = maxVerano.normalizedDifference(['B3', 'B5']);
+
+// Create some binary images from thresholds on the indices.
+// This threshold is designed to detect bare land.
+var bare1 = ndvi.lt(0.1).and(ndwi.lt(0.3));
+// This detects bare land with lower sensitivity. It also detects shadows.
+var bare2 = ndvi.lt(0.1).and(ndwi.lt(0.8));
+
+// Define visualization parameters for the spectral indices.
+var ndviViz = {min: -0.3, max: 0.8, palette: ['FF0000', '00FF00']}; //rojo a verde
+var ndwiViz = {min: -0.5, max: 0.8, palette: ['00FFFF', '0000FF']}; //cian a azul
+
+// Mask and mosaic visualization images.  The last layer is on top.
+var mosaic = ee.ImageCollection([
+  // NDWI > 0.5 is water.  Visualize it with a blue palette.
+  ndwi.updateMask(ndwi.gte(0.2)).visualize(ndwiViz),
+  // NDVI > 0.2 is vegetation.  Visualize it with a green palette.
+  ndvi.updateMask(ndvi.gte(0.1)).visualize(ndviViz),
+  // Visualize bare areas with shadow (bare2 but not bare1) as gray.
+  bare2.updateMask(bare2.and(bare1.not())).visualize({palette: ['AAAAAA']}),
+  // Visualize the other bare areas as white.
+  bare1.updateMask(bare1).visualize({palette: ['FFFFFF']}),
+              ]).mosaic();
+Map.addLayer(mosaic, {}, 'Visualization mosaic');
+
+//----------------------------//
+//SETUP ORIGINAL
+
+Map.setCenter(-61.38095539539357, -38.93842089044818);
+Map.addLayer(filtrada.median(), rgb_vis, 'RGB(median)');
+Map.addLayer(maxVerano, ndvi_colores, 'ver');
+Map.addLayer(maxInvierno, ndvi_colores, 'inv');
+
+Map.addLayer(maxInvierno, {bands: ['NDSI', 'NDVI', 'NDWI']}, 'falsocolor');
+Map.addLayer(maxVerano, {bands: ['NDSI', 'NDVI', 'NDWI']}, 'falsocolor');
